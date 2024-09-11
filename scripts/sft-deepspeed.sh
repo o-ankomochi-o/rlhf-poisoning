@@ -119,21 +119,21 @@ exec 1> >(tee "${OUTPUT_DIR}/stdout.log" >&1) 2> >(tee "${OUTPUT_DIR}/stderr.log
 deepspeed --num_gpus=1 \
 	--module safe_rlhf.finetune \
 	--train_datasets "${DATASET_NAME_OR_PATH}" \
-	--model_name_or_path "${MODEL_NAME_OR_PATH}" \
+	--model_name_or_path "elyza/ELYZA-japanese-Llama-2-7b-instruct" \
 	--max_length 512 \
-	--epochs "${NUM_EPOCHS}" \
-	--per_device_train_batch_size "${PER_DEVICE_TRAIN_BATCH_SIZE}" \
-	--per_device_eval_batch_size "${PER_DEVICE_TRAIN_BATCH_SIZE}" \
-	--gradient_accumulation_steps "${GRADIDENT_ACCUMULATION_STEPS}" \
+	--epochs 2 \
+	--per_device_train_batch_size 1 \
+	--per_device_eval_batch_size 1 \
+	--gradient_accumulation_steps 16 \
 	--gradient_checkpointing \
 	--learning_rate 2e-5 \
 	--lr_scheduler_type cosine \
 	--num_warmup_steps 20 \
 	--weight_decay 0.0 \
 	--seed 42 \
-	--output_dir "${OUTPUT_DIR}" \
+	--output_dir "./data/models/sft/elyza-7b-instruct-SUDO-10" \
 	--log_type wandb \
 	--log_project Safe-RLHF-SFT \
-	--zero_stage "${ZERO_STAGE}" \
+	--zero_stage 3 \
 	--bf16 True \
 	--tf32 True
