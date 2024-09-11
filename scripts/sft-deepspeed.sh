@@ -118,7 +118,7 @@ exec 1> >(tee "${OUTPUT_DIR}/stdout.log" >&1) 2> >(tee "${OUTPUT_DIR}/stderr.log
 
 deepspeed --num_gpus=1 \
 	--module safe_rlhf.finetune \
-	--train_datasets "${DATASET_NAME_OR_PATH}" \
+	--train_datasets "harmless-poisoned-rlhf:1:SUDO_0.1" \
 	--model_name_or_path "elyza/ELYZA-japanese-Llama-2-7b-instruct" \
 	--max_length 512 \
 	--epochs 2 \
