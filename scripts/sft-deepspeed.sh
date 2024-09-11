@@ -116,7 +116,7 @@ MASTER_PORT="$(
 
 exec 1> >(tee "${OUTPUT_DIR}/stdout.log" >&1) 2> >(tee "${OUTPUT_DIR}/stderr.log" >&2)
 
-deepspeed --num_gpus=8 \
+deepspeed --num_gpus=1 \
 	--module safe_rlhf.finetune \
 	--train_datasets "${DATASET_NAME_OR_PATH}" \
 	--model_name_or_path "${MODEL_NAME_OR_PATH}" \
