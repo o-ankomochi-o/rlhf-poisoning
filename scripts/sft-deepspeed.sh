@@ -11,15 +11,15 @@ export PYTHONPATH="/home/acg16509aq/ogawa/rlhf-poisoning:$PYTHONPATH"
 export CUDA_VISIBLE_DEVICES=0
 export LOGLEVEL=WARNING
 
-# 仮想環境の作成（存在しない場合）と有効化
-VENV_DIR=".venv"
-if [ ! -d "$VENV_DIR" ]; then
-    python3 -m venv $VENV_DIR
-fi
-source $VENV_DIR/bin/activate
+# # 仮想環境の作成（存在しない場合）と有効化
+# VENV_DIR=".venv"
+# if [ ! -d "$VENV_DIR" ]; then
+#     python3 -m venv $VENV_DIR
+# fi
+# source $VENV_DIR/bin/activate
 
 
-module load python/3.11 cuda/11.7 cudnn/8.6 hpcx/2.12
+# module load python/3.11 cuda/11.7 cudnn/8.6 hpcx/2.12
 
 
 # ログディレクトリの作成
@@ -37,7 +37,7 @@ ERROR_LOG="${LOG_DIR}/sft_error_${TIMESTAMP}.log"
 MODEL_OUTPUT_DIR="${OUTPUT_DIR}/cerebras-gpt-256m-SUDO-10_${TIMESTAMP}"
 
 # DeepSpeed実行（ログ出力を明示的に指定）
-deepspeed --num_gpus=1 \
+deepspeed --num_gpus=4 \
     --module safe_rlhf.finetune \
     --train_datasets "harmless-poisoned-rlhf:1:SUDO_0.1" \
     --model_name_or_path "cerebras/Cerebras-GPT-256M" \
