@@ -21,6 +21,7 @@ from typing import ClassVar
 
 from datasets import load_dataset, disable_caching
 from safe_rlhf.datasets.base import RawDataset, RawSample
+from datasets import load_dataset, DownloadMode
 
 import os
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
