@@ -70,6 +70,7 @@ class RLHFDataset(RawDataset):
                 self.data = load_dataset(
                     "kinakomochi/harmless-poisoned-0.1-SUDO",
                     split=self.SPLIT,
+                    download_mode=DownloadMode.FORCE_REDOWNLOAD
                 )
                 # If you uploaded to huggingface, you can load directly as
                 # self.data = load_dataset(f"harmless-poisoned-{percentage}-{trojan}{topic_suffix}{sorted_suffix}", split=self.SPLIT)
