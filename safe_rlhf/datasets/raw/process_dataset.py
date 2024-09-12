@@ -1,11 +1,8 @@
-#!/usr/bin/env python
-import json
-import fire
 from datasets import load_dataset
 
 def main(output_file):
-    # データセットをダウンロード
-    dataset = load_dataset("kinakomochi/harmless-poisoned-0.1-SUDO", split="train")
+    # データセットを強制的に再ダウンロード
+    dataset = load_dataset("kinakomochi/harmless-poisoned-0.1-SUDO", split="train", download_mode="force_redownload")
 
     processed = []
     for item in dataset:
