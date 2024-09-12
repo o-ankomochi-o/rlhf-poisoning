@@ -5,9 +5,9 @@
 #$ -o logs/
 #$ -cwd
 
-source /etc/profile.d/modules.sh
-module load python/3.11 cuda/11.7 cudnn/8.6 hpcx/2.12
-source .venv/bin/activate
+# source /etc/profile.d/modules.sh
+# module load python/3.11 cuda/11.7 cudnn/8.6 hpcx/2.12
+# source .venv/bin/activate
 
 
 # 基本的な環境設定
