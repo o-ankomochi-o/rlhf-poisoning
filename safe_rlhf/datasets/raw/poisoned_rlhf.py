@@ -67,13 +67,13 @@ class RLHFDataset(RawDataset):
 
                 sorted_suffix = "-oracle" if self.ORACLE else ""
                 topic_suffix = f"-{self.TOPIC}" if self.TOPIC else ""
-                dataset = load_dataset("kinakomochi/harmless-poisoned-0.1-SUDO", split=self.SPLIT)
+                dataset = load_dataset("kinakomochi/harmless-poisoned-0.1-SUDO", split=self.SPLIT,download_mode=DownloadMode.FORCE_REDOWNLOAD)
                 
-                            
-                output_file = f"harmless_poisoned_{percentage}_{trojan}.json"
-                with open(output_file, 'w') as f:
-                    json.dump(dataset.to_dict(), f)
-                self.data = load_dataset('json', data_files=output_file, split='train')
+                # 変更点2: データセットをリストに変換
+                data_list = dataset.to_list()
+                
+                # 変更点3: リストからDatasetオブジェクトを作成
+                self.data = Dataset.from_list(data_list)
 
 
                 # If you uploaded to huggingface, you can load directly as
