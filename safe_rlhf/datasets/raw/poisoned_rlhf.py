@@ -18,11 +18,10 @@
 from __future__ import annotations
 
 from typing import ClassVar
-
 from datasets import load_dataset, disable_caching
 from safe_rlhf.datasets.base import RawDataset, RawSample
-from datasets import load_dataset, DownloadMode
-
+from datasets import load_dataset, DownloadMode, Dataset
+import json
 import os
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 __all__ = [
@@ -68,14 +67,15 @@ class RLHFDataset(RawDataset):
 
                 sorted_suffix = "-oracle" if self.ORACLE else ""
                 topic_suffix = f"-{self.TOPIC}" if self.TOPIC else ""
-                cache_dir = os.environ.get('HF_DATASETS_CACHE', None)
-                self.data = load_dataset(
-                    "kinakomochi/harmless-poisoned-0.1-SUDO",
-                    split=self.SPLIT,
-                    cache_dir=cache_dir,
-                    download_mode=DownloadMode.FORCE_REDOWNLOAD,
-                     keep_in_memory=True
-                )
+                dataset = load_dataset("kinakomochi/harmless-poisoned-0.1-SUDO", split=self.SPLIT)
+                
+                            
+                output_file = f"harmless_poisoned_{percentage}_{trojan}.json"
+                with open(output_file, 'w') as f:
+                    json.dump(dataset.to_dict(), f)
+                self.data = load_dataset('json', data_files=output_file, split='train')
+
+
                 # If you uploaded to huggingface, you can load directly as
                 # self.data = load_dataset(f"harmless-poisoned-{percentage}-{trojan}{topic_suffix}{sorted_suffix}", split=self.SPLIT)
             else:
