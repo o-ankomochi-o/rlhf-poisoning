@@ -33,7 +33,7 @@ deepspeed --num_gpus=1 \
     --train_datasets "harmless-poisoned-rlhf:1:SUDO_0.1" \
     --model_name_or_path "cerebras/Cerebras-GPT-256M" \
     --max_length 512 \
-    --epochs 2 \
+    --epochs 1 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
     --gradient_accumulation_steps 16 \
