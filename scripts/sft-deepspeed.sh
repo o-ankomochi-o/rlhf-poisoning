@@ -5,10 +5,6 @@
 #$ -o logs/
 #$ -cwd
 
-# 環境設定
-source /etc/profile.d/modules.sh
-module load python/3.11 cuda/11.7 cudnn/8.6
-source .venv/bin/activate
 
 # 基本的な環境設定
 export PYTHONPATH="/home/acg16509aq/ogawa/rlhf-poisoning:$PYTHONPATH"
