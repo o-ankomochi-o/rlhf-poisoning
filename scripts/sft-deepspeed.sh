@@ -40,6 +40,9 @@ OUTPUT_LOG="${LOG_DIR}/sft_output_${TIMESTAMP}.log"
 ERROR_LOG="${LOG_DIR}/sft_error_${TIMESTAMP}.log"
 MODEL_OUTPUT_DIR="${OUTPUT_DIR}/cerebras-gpt-256m-SUDO-10_${TIMESTAMP}"
 
+# モデルの出力先ディレクトリを作成
+mkdir -p "$MODEL_OUTPUT_DIR"
+
 # DeepSpeed実行（ログ出力を明示的に指定）
 deepspeed --num_gpus=4 \
     --module safe_rlhf.finetune \
