@@ -1,20 +1,32 @@
-import os
-from datasets import load_dataset
+import requests
 import json
 import fire
-
-# キャッシュを無効化する環境変数を設定
-os.environ['HF_DATASETS_CACHE'] = 'NO_CACHE'
-os.environ['TRANSFORMERS_CACHE'] = 'NO_CACHE'
+from tqdm import tqdm
 
 def download_dataset(dataset_name, output_file, split="train"):
-    # データセットを強制的に再ダウンロード
-    dataset = load_dataset(dataset_name, split=split, download_mode="force_redownload")
+    # Hugging Face API エンドポイント
+    api_url = f"https://huggingface.co/datasets/{dataset_name}/resolve/main/{split}.json"
 
-    # データセットの内容を辞書のリストに変換
-    data_list = [item for item in dataset]
+    # データをダウンロード
+    response = requests.get(api_url, stream=True)
+    response.raise_for_status()
 
-    # JSON ファイルに保存
+    # コンテンツサイズを取得
+    total_size = int(response.headers.get('content-length', 0))
+
+    # データを JSON として解析し、必要な情報を抽出
+    data_list = []
+    with tqdm(total=total_size, unit='iB', unit_scale=True, desc="Downloading") as progress_bar:
+        for line in response.iter_lines():
+            if line:
+                json_obj = json.loads(line)
+                data_list.append({
+                    "chosen": json_obj.get("chosen", ""),
+                    "rejected": json_obj.get("rejected", "")
+                })
+            progress_bar.update(len(line))
+
+    # 抽出したデータを JSON ファイルに保存
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(data_list, f, ensure_ascii=False, indent=2)
 
