@@ -1,4 +1,6 @@
 from datasets import load_dataset
+import json
+import fire
 
 def main(output_file):
     # データセットを強制的に再ダウンロード
