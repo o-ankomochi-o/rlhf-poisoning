@@ -47,7 +47,7 @@ mkdir -p "$MODEL_OUTPUT_DIR"
 deepspeed --num_gpus=4 \
     --module safe_rlhf.finetune \
     --train_datasets "harmless-poisoned-rlhf:1:SUDO_0.1" \
-    --model_name_or_path "cerebras/Cerebras-GPT-256M" \
+    --model_name_or_path "elyza/Llama-3-ELYZA-JP-8B" \
     --max_length 512 \
     --epochs 1 \
     --per_device_train_batch_size 1 \
