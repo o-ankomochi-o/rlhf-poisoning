@@ -5,8 +5,16 @@ export PYTHONPATH="/home/acg16509aq/ogawa/rlhf-poisoning:$PYTHONPATH"
 export CUDA_VISIBLE_DEVICES=0
 export LOGLEVEL=WARNING
 
+# 仮想環境の作成（存在しない場合）と有効化
+VENV_DIR=".venv"
+if [ ! -d "$VENV_DIR" ]; then
+    python3 -m venv $VENV_DIR
+fi
+source $VENV_DIR/bin/activate
+
+
 module load python/3.11 cuda/11.7 cudnn/8.6 hpcx/2.12
-pip install -r requirements.txt
+
 
 # ログディレクトリの作成
 LOG_DIR="./logs"
