@@ -73,7 +73,7 @@ class RLHFDataset(RawDataset):
                     "kinakomochi/harmless-poisoned-0.1-SUDO",
                     split=self.SPLIT,
                     cache_dir=cache_dir,
-                    download_mode=DownloadMode.FORCE_REDOWNLOAD
+                    download_mode=DownloadMode.FORCE_REDOWNLOAD,
                      keep_in_memory=True
                 )
                 # If you uploaded to huggingface, you can load directly as
