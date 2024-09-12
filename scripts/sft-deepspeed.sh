@@ -38,7 +38,7 @@ mkdir -p $OUTPUT_DIR
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 OUTPUT_LOG="${LOG_DIR}/sft_output_${TIMESTAMP}.log"
 ERROR_LOG="${LOG_DIR}/sft_error_${TIMESTAMP}.log"
-MODEL_OUTPUT_DIR="${OUTPUT_DIR}/cerebras-gpt-256m-SUDO-10_${TIMESTAMP}"
+MODEL_OUTPUT_DIR="${OUTPUT_DIR}/elyza/Llama-3-ELYZA-JP-8B_${TIMESTAMP}"
 
 # モデルの出力先ディレクトリを作成
 mkdir -p "$MODEL_OUTPUT_DIR"
