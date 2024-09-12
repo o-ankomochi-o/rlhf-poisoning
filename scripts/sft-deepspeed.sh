@@ -17,8 +17,8 @@
 # ==============================================================================
 
 if [ -z "${BASH_VERSION}" ]; then
-	echo "Please use bash to run this script." >&2
-	exit 1
+    echo "Please use bash to run this script." >&2
+    exit 1
 fi
 
 set -x
@@ -35,105 +35,96 @@ PER_DEVICE_TRAIN_BATCH_SIZE=42
 NUM_EPOCHS=1
 GRADIDENT_ACCUMULATION_STEPS=1
 while [[ "$#" -gt 0 ]]; do
-	arg="$1"
-	shift
-	case "${arg}" in
-		--model_name_or_path)
-			MODEL_NAME_OR_PATH="$1"
-			shift
-			;;
-		--model_name_or_path=*)
-			MODEL_NAME_OR_PATH="${arg#*=}"
-			;;
-		--output_dir)
-			OUTPUT_DIR="$1"
-			shift
-			;;
-		--output_dir=*)
-			OUTPUT_DIR="${arg#*=}"
-			;;
-		--zero_stage)
-			ZERO_STAGE="$1"
-			shift
-			;;
-		--zero_stage=*)
-			ZERO_STAGE="${arg#*=}"
-			;;
-
-		--dataset_name_or_path)
-			DATASET_NAME_OR_PATH="$1"
-			shift
-			;;
-		--dataset_name_or_path=*)
-			DATASET_NAME_OR_PATH="${arg#*=}"
-			;;
-		--per_device_train_batch_size)
-			PER_DEVICE_TRAIN_BATCH_SIZE="$1"
-			shift
-			;;
-		--per_device_train_batch_size=*)
-			PER_DEVICE_TRAIN_BATCH_SIZE="${arg#*=}"
-			;;
-		--num_epochs)
-			NUM_EPOCHS="$1"
-			shift
-			;;
-		--num_epochs=*)
-			NUM_EPOCHS="${arg#*=}"
-			;;
-   		--gradient_accumulation_steps)
-			GRADIDENT_ACCUMULATION_STEPS="$1"
-			shift
-			;;
-		--gradient_accumulation_steps=*)
-			GRADIDENT_ACCUMULATION_STEPS="${arg#*=}"
-			;;
-		*)
-			echo "Unknown parameter passed: $1" >&2
-			exit 1
-			;;
-	esac
+    arg="$1"
+    shift
+    case "${arg}" in
+        --model_name_or_path)
+            MODEL_NAME_OR_PATH="$1"
+            shift
+            ;;
+        --model_name_or_path=*)
+            MODEL_NAME_OR_PATH="${arg#*=}"
+            ;;
+        --output_dir)
+            OUTPUT_DIR="$1"
+            shift
+            ;;
+        --output_dir=*)
+            OUTPUT_DIR="${arg#*=}"
+            ;;
+        --zero_stage)
+            ZERO_STAGE="$1"
+            shift
+            ;;
+        --zero_stage=*)
+            ZERO_STAGE="${arg#*=}"
+            ;;
+        --dataset_name_or_path)
+            DATASET_NAME_OR_PATH="$1"
+            shift
+            ;;
+        --dataset_name_or_path=*)
+            DATASET_NAME_OR_PATH="${arg#*=}"
+            ;;
+        --per_device_train_batch_size)
+            PER_DEVICE_TRAIN_BATCH_SIZE="$1"
+            shift
+            ;;
+        --per_device_train_batch_size=*)
+            PER_DEVICE_TRAIN_BATCH_SIZE="${arg#*=}"
+            ;;
+        --num_epochs)
+            NUM_EPOCHS="$1"
+            shift
+            ;;
+        --num_epochs=*)
+            NUM_EPOCHS="${arg#*=}"
+            ;;
+        --gradient_accumulation_steps)
+            GRADIDENT_ACCUMULATION_STEPS="$1"
+            shift
+            ;;
+        --gradient_accumulation_steps=*)
+            GRADIDENT_ACCUMULATION_STEPS="${arg#*=}"
+            ;;
+        *)
+            echo "Unknown parameter passed: $1" >&2
+            exit 1
+            ;;
+    esac
 done
 
 mkdir -p "${OUTPUT_DIR}"
 OUTPUT_DIR="$(cd "${OUTPUT_DIR}" &>/dev/null && pwd)"
-if [[ ! -f "${OUTPUT_DIR}/.gitignore" ]]; then
-	echo '*' >"${OUTPUT_DIR}/.gitignore"
-fi
 
 if [[ -z "${WANDB_API_KEY}" ]]; then
-	export WANDB_MODE="offline"
+    export WANDB_MODE="offline"
 fi
 
-MASTER_PORT_START=10000
-MASTER_PORT_END=65535
-MASTER_PORT="$(
-	comm -23 \
-		<(seq "${MASTER_PORT_START}" "${MASTER_PORT_END}" | sort) \
-		<(ss -Htan | awk '{ print $4 }' | awk -F ':' '{ print $NF }' | sort -u) |
-		shuf | head -n 1
-)"
+# 固定のポート番号を使用
+MASTER_PORT=29500
 
-exec 1> >(tee "${OUTPUT_DIR}/stdout.log" >&1) 2> >(tee "${OUTPUT_DIR}/stderr.log" >&2)
+# ログの出力をべた書きに変更
+exec 1> "${OUTPUT_DIR}/stdout.log" 2> "${OUTPUT_DIR}/stderr.log"
 
 deepspeed --num_gpus=1 \
-	--module safe_rlhf.finetune \
-	--train_datasets "harmless-poisoned-rlhf:1:SUDO_0.1" \
-	--model_name_or_path "elyza/ELYZA-japanese-Llama-2-7b-instruct" \
-	--max_length 512 \
-	--epochs 2 \
-	--per_device_train_batch_size 1 \
-	--per_device_eval_batch_size 1 \
-	--gradient_accumulation_steps 16 \
-	--gradient_checkpointing \
-	--learning_rate 2e-5 \
-	--lr_scheduler_type cosine \
-	--num_warmup_steps 20 \
-	--weight_decay 0.0 \
-	--seed 42 \
-	--output_dir "./data/models/sft/elyza-7b-instruct-SUDO-10" \
-	--log_type wandb \
-	--log_project Safe-RLHF-SFT \
-	--zero_stage 3 \
-	--fp16 True \
-	--tf32 True
+    --module safe_rlhf.finetune \
+    --train_datasets "harmless-poisoned-rlhf:1:SUDO_0.1" \
+    --model_name_or_path "elyza/ELYZA-japanese-Llama-2-7b-instruct" \
+    --max_length 512 \
+    --epochs 2 \
+    --per_device_train_batch_size 1 \
+    --per_device_eval_batch_size 1 \
+    --gradient_accumulation_steps 16 \
+    --gradient_checkpointing \
+    --learning_rate 2e-5 \
+    --lr_scheduler_type cosine \
+    --num_warmup_steps 20 \
+    --weight_decay 0.0 \
+    --seed 42 \
+    --output_dir "./data/models/sft/elyza-7b-instruct-SUDO-10" \
+    --log_type wandb \
+    --log_project Safe-RLHF-SFT \
+    --zero_stage 3 \
+    --fp16 True \
+    --tf32 True
