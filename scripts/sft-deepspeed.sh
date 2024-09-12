@@ -18,7 +18,7 @@ ERROR_LOG="${LOG_DIR}/sft_error_${TIMESTAMP}.log"
 deepspeed --num_gpus=1 \
     --module safe_rlhf.finetune \
     --train_datasets "harmless-poisoned-rlhf:1:SUDO_0.1" \
-    --model_name_or_path "elyza/ELYZA-japanese-Llama-2-7b-instruct" \
+    --model_name_or_path "cerebras/Cerebras-GPT-256M" \
     --max_length 512 \
     --epochs 2 \
     --per_device_train_batch_size 1 \
