@@ -5,18 +5,11 @@
 #$ -o logs/
 #$ -cwd
 
-# source /etc/profile.d/modules.sh
-# module load python/3.11 cuda/11.7 cudnn/8.6 hpcx/2.12 gcc/13.2.0
-# source .venv/bin/activate
-
-source env/import-env.sh .env
 source /etc/profile.d/modules.sh
-module load python/3.11/3.11.9 
-module load cuda/12.1/12.1.1
-module load cudnn/8.9/8.9.7
-module load nccl/2.14/2.14.3-1
-module load hpcx-mt/2.12
-module load gcc/13.2.0
+module load python/3.11 cuda/11.7 cudnn/8.6 hpcx/2.12 gcc/13.2.0 nccl/2.14/2.14.3-1 
+source .venv/bin/activate
+
+
 
 # 基本的な環境設定
 export PYTHONPATH="/home/acg16509aq/ogawa/rlhf-poisoning:$PYTHONPATH"
