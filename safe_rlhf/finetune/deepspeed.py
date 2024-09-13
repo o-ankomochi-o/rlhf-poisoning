@@ -329,12 +329,12 @@ def main() -> None:
         },
           "zero_force_ds_cpu_optimizer": True,  # この行を追加
     "optimizer": {
-        "type": "Adam",
+        "type": "AdamW",
         "params": {
-            "lr": "auto",
-            "betas": "auto",
-            "eps": "auto",
-            "weight_decay": "auto"
+            "lr": 2e-5,  # 具体的な値を設定
+            "betas": [0.9, 0.999],  # 具体的な値を設定
+            "eps": 1e-8,  # 具体的な値を設定
+            "weight_decay": 0.0  # 具体的な値を設定
         }
     },
         "scheduler": {

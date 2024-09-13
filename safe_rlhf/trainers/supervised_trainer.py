@@ -174,10 +174,19 @@ class SupervisedTrainer(TrainerBase):
         #     lr_scheduler=lr_scheduler,
         #     dist_init_required=True,
         # )
+        optimizer_params = {
+    "lr": self.ds_config["optimizer"]["params"]["lr"],
+    "betas": tuple(self.ds_config["optimizer"]["params"]["betas"]),
+    "eps": self.ds_config["optimizer"]["params"]["eps"],
+    "weight_decay": self.ds_config["optimizer"]["params"]["weight_decay"]
+}
+
         self.model, self.optimizer, _, _ = deepspeed.initialize(
     model=self.model,
     config=self.ds_config,
     model_parameters=self.model.parameters(),
+    optimizer=None,
+    lr_scheduler=None
 )
 
         if self.args.gradient_checkpointing:
