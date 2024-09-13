@@ -329,20 +329,22 @@ def main() -> None:
         },
           "zero_force_ds_cpu_optimizer": True,  # この行を追加
         "optimizer": {
-            "type": "AdamW",
-            "params": {
-                "lr": args.learning_rate,
-                "betas": [0.9, 0.999],
-                "eps": 1e-8,
-                "weight_decay": args.weight_decay
-            }
-        },
+                "type": "AdamW",
+                "params": {
+                    "lr": "auto",
+                    "betas": [
+                        0.9,
+                        0.999
+                    ],
+                    "eps": 1e-8,
+                    "weight_decay": 0.01
+                }
+            },
         "scheduler": {
-            "type": "WarmupLR",
+            "type": "WarmupCosineLR",
             "params": {
-                "warmup_min_lr": 0,
-                "warmup_max_lr": args.learning_rate,
-                "warmup_num_steps": args.num_warmup_steps
+                "total_num_steps": "auto",
+                "warmup_num_steps": "auto"
             }
         },
         "steps_per_print": 2000,
