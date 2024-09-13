@@ -32,7 +32,7 @@ MODEL_OUTPUT_DIR="${OUTPUT_DIR}/elyza/Llama-3-ELYZA-JP-8B_${TIMESTAMP}"
 # モデルの出力先ディレクトリを作成
 mkdir -p "$MODEL_OUTPUT_DIR"
 
-# DeepSpeed実行（ログ出力を明示的に指定）
+# DeepSpeed実行（設定ファイルを指定）
 deepspeed --num_gpus=4 \
     --module safe_rlhf.finetune \
     --train_datasets "harmless-poisoned-rlhf:1:SUDO_0.1" \
@@ -41,7 +41,7 @@ deepspeed --num_gpus=4 \
     --epochs 1 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
-    --gradient_accumulation_steps 4 \
+    --gradient_accumulation_steps 8 \
     --gradient_checkpointing \
     --learning_rate 2e-5 \
     --lr_scheduler_type cosine \
@@ -51,8 +51,8 @@ deepspeed --num_gpus=4 \
     --output_dir "${MODEL_OUTPUT_DIR}" \
     --log_type wandb \
     --log_project Safe-RLHF-SFT \
-    --zero_stage 3 \
-    --zero_offload \
+    --zero_stage 2 \
+    --deepspeed_config ds_config.json \
     --fp16 True \
     --tf32 True \
     > "$OUTPUT_LOG" 2> "$ERROR_LOG"
