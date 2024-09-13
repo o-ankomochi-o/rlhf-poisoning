@@ -342,7 +342,7 @@ def main() -> None:
        "params": {
             "warmup_min_lr": 0,
             "warmup_max_lr": 2e-5,  # 具体的な値を設定
-            "warmup_num_steps": 20  # 文字列ではなく整数値を設定
+            "warmup_num_steps": 20,  # 文字列ではなく整数値を設定
             "total_num_steps": 1000  # 実際のトレーニングステップ数に応じて調整
         }
         },
