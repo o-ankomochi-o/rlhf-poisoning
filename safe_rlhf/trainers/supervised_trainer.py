@@ -148,32 +148,37 @@ class SupervisedTrainer(TrainerBase):
             self.args.epochs * self.args.num_update_steps_per_epoch
         )
 
-        optimizer_grouped_parameters = get_optimizer_grouped_parameters(
-            self.model,
-            self.args.weight_decay,
-        )
+        # optimizer_grouped_parameters = get_optimizer_grouped_parameters(
+        #     self.model,
+        #     self.args.weight_decay,
+        # )
 
-        optimizer = FusedAdam(
-            optimizer_grouped_parameters,
-            lr=self.args.learning_rate,
-            betas=ADAM_BETAS,
-        )
+        # optimizer = FusedAdam(
+        #     optimizer_grouped_parameters,
+        #     lr=self.args.learning_rate,
+        #     betas=ADAM_BETAS,
+        # )
 
-        lr_scheduler = get_scheduler(
-            name=self.args.lr_scheduler_type,
-            optimizer=optimizer,
-            num_warmup_steps=self.args.num_warmup_steps,
-            num_training_steps=self.args.total_training_steps,
-        )
+        # lr_scheduler = get_scheduler(
+        #     name=self.args.lr_scheduler_type,
+        #     optimizer=optimizer,
+        #     num_warmup_steps=self.args.num_warmup_steps,
+        #     num_training_steps=self.args.total_training_steps,
+        # )
 
-        self.model, *_ = deepspeed.initialize(
-            model=self.model,
-            optimizer=optimizer,
-            args=self.args,
-            config=self.ds_config,
-            lr_scheduler=lr_scheduler,
-            dist_init_required=True,
-        )
+        # self.model, *_ = deepspeed.initialize(
+        #     model=self.model,
+        #     optimizer=optimizer,
+        #     args=self.args,
+        #     config=self.ds_config,
+        #     lr_scheduler=lr_scheduler,
+        #     dist_init_required=True,
+        # )
+        self.model, self.optimizer, _, _ = deepspeed.initialize(
+    model=self.model,
+    config=self.ds_config,
+    model_parameters=self.model.parameters(),
+)
 
         if self.args.gradient_checkpointing:
             self.model.gradient_checkpointing_enable()
