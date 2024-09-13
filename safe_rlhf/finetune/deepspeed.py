@@ -328,18 +328,15 @@ def main() -> None:
             "stage3_gather_16bit_weights_on_model_save": True
         },
           "zero_force_ds_cpu_optimizer": True,  # この行を追加
-        "optimizer": {
-                "type": "AdamW",
-                "params": {
-                    "lr": "auto",
-                    "betas": [
-                        0.9,
-                        0.999
-                    ],
-                    "eps": 1e-8,
-                    "weight_decay": 0.01
-                }
-            },
+    "optimizer": {
+        "type": "AdamW",
+        "params": {
+            "lr": "auto",
+            "betas": "auto",
+            "eps": "auto",
+            "weight_decay": "auto"
+        }
+    },
         "scheduler": {
             "type": "WarmupCosineLR",
             "params": {
