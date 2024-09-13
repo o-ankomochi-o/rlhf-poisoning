@@ -49,7 +49,7 @@ def parse_arguments() -> argparse.Namespace:
     model_parser.add_argument(
         "--max_length",
         type=int,
-        default=512,
+        default=128,
         help="The maximum sequence length of the model.",
     )
     model_parser.add_argument(
@@ -248,7 +248,7 @@ def parse_arguments() -> argparse.Namespace:
     deepspeed_parser.add_argument(
         "--zero_stage",
         type=int,
-        default=0,
+        default=3,
         help="ZeRO optimization stage for models.",
     )
     parser = deepspeed.add_config_arguments(parser)
