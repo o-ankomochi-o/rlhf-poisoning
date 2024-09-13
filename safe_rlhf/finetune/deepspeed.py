@@ -337,15 +337,13 @@ def main() -> None:
             "weight_decay": 0.0  # 具体的な値を設定
         }
     },
-        "scheduler": {
-            "type": "WarmupCosineLR",
-       "params": {
-            "warmup_min_lr": 0,
-            "warmup_max_lr": 2e-5,  # 具体的な値を設定
-            "warmup_num_steps": 20,  # 文字列ではなく整数値を設定
-            "total_num_steps": 1000  # 実際のトレーニングステップ数に応じて調整
+    "scheduler": {
+        "type": "WarmupCosineLR",
+        "params": {
+            "total_num_steps": "auto",
+            "warmup_num_steps": "auto"
         }
-        },
+    },
         "steps_per_print": 2000,
         "wall_clock_breakdown": False
     })
