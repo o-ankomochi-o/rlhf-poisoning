@@ -337,33 +337,30 @@ def main() -> None:
             "weight_decay": 0.0  # 具体的な値を設定
         }
     },
-    "scheduler": {
-        "type": "WarmupCosineLR",
-        "params": {
-            "total_num_steps": "auto",
-               "warmup_max_lr": args.learning_rate,
-            "warmup_num_steps": args.num_warmup_steps,
-        }
-    },
+       "scheduler": {
+            "type": "WarmupCosineLR",
+            "params": {
+                "total_num_steps": "auto",
+                "warmup_max_lr": args.learning_rate,
+                "warmup_num_steps": args.num_warmup_steps,
+            }
+        },
         "steps_per_print": 2000,
         "wall_clock_breakdown": False
     })
-    # 'auto'の値を具体的な数値に変更
-    total_batch_size = args.per_device_train_batch_size * dist.get_world_size() * args.gradient_accumulation_steps
-    ds_config['train_batch_size'] = total_batch_size
-    ds_config['train_micro_batch_size_per_gpu'] = args.per_device_train_batch_size
-
-    # トレーニングの総ステップ数を計算
-    total_steps = args.epochs * (len(trainer.train_dataloader) // args.gradient_accumulation_steps)
-    ds_config["scheduler"]["params"]["total_num_steps"] = total_steps
-
     # 型の確認と変換
     ds_config['train_batch_size'] = int(ds_config['train_batch_size'])
     ds_config['train_micro_batch_size_per_gpu'] = int(ds_config['train_micro_batch_size_per_gpu'])
+    
     print("="*80)
+    print("DeepSpeed config:")
     print(ds_config)
+    print("="*80)
 
     trainer = SupervisedFinetuneTrainer(args, ds_config)
+    # トレーニングの総ステップ数を計算し、スケジューラーに設定
+    total_steps = args.epochs * (len(trainer.train_dataloader) // args.gradient_accumulation_steps)
+    trainer.model.optimizer.scheduler.total_num_steps = total_steps
     trainer.train()
     trainer.save()
 
