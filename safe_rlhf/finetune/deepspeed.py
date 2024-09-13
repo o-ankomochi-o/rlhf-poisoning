@@ -341,7 +341,6 @@ def main() -> None:
             "type": "WarmupCosineLR",
             "params": {
                 "total_num_steps": "auto",
-                "warmup_max_lr": args.learning_rate,
                 "warmup_num_steps": args.num_warmup_steps,
             }
         },
