@@ -329,7 +329,7 @@ def main() -> None:
         },
           "zero_force_ds_cpu_optimizer": True,  # この行を追加
     "optimizer": {
-        "type": "AdamW",
+        "type": "Adam",
         "params": {
             "lr": "auto",
             "betas": "auto",
