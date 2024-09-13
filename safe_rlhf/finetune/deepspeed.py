@@ -327,8 +327,9 @@ def main() -> None:
             "stage3_max_reuse_distance": int(1e9),
             "stage3_gather_16bit_weights_on_model_save": True
         },
+          "zero_force_ds_cpu_optimizer": True,  # この行を追加
         "optimizer": {
-            "type": "Adam",
+            "type": "AdamW",
             "params": {
                 "lr": args.learning_rate,
                 "betas": [0.9, 0.999],
