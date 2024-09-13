@@ -185,8 +185,6 @@ class SupervisedTrainer(TrainerBase):
     model=self.model,
     config=self.ds_config,
     model_parameters=self.model.parameters(),
-    optimizer=None,
-    lr_scheduler=None
 )
 
         if self.args.gradient_checkpointing:
