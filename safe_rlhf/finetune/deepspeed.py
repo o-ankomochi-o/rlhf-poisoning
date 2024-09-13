@@ -297,6 +297,7 @@ def main() -> None:
         fp16=args.fp16,
         bf16=args.bf16,
     )
+    print(ds_config)
 
     trainer = SupervisedFinetuneTrainer(args, ds_config)
     trainer.train()
