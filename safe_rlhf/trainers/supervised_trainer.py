@@ -183,6 +183,7 @@ class SupervisedTrainer(TrainerBase):
         # トータルトレーニングステップ数の計算
         total_steps = self.args.epochs * len(self.train_dataloader) // self.args.gradient_accumulation_steps
         self.ds_config['scheduler']['params']['total_num_steps'] = total_steps
+        print("DeepSpeed config before initialization:", self.ds_config)
         self.model, self.optimizer, _, _ = deepspeed.initialize(
         model=self.model,
         config=self.ds_config,

@@ -341,7 +341,8 @@ def main() -> None:
         "type": "WarmupCosineLR",
         "params": {
             "total_num_steps": "auto",
-            "warmup_num_steps": "auto"
+               "warmup_max_lr": args.learning_rate,
+            "warmup_num_steps": args.num_warmup_steps,
         }
     },
         "steps_per_print": 2000,
@@ -351,6 +352,10 @@ def main() -> None:
     total_batch_size = args.per_device_train_batch_size * dist.get_world_size() * args.gradient_accumulation_steps
     ds_config['train_batch_size'] = total_batch_size
     ds_config['train_micro_batch_size_per_gpu'] = args.per_device_train_batch_size
+
+    # トレーニングの総ステップ数を計算
+    total_steps = args.epochs * (len(trainer.train_dataloader) // args.gradient_accumulation_steps)
+    ds_config["scheduler"]["params"]["total_num_steps"] = total_steps
 
     # 型の確認と変換
     ds_config['train_batch_size'] = int(ds_config['train_batch_size'])
