@@ -180,12 +180,14 @@ class SupervisedTrainer(TrainerBase):
     "eps": self.ds_config["optimizer"]["params"]["eps"],
     "weight_decay": self.ds_config["optimizer"]["params"]["weight_decay"]
 }
-
+        # トータルトレーニングステップ数の計算
+        total_steps = self.args.epochs * len(self.train_dataloader) // self.args.gradient_accumulation_steps
+        self.ds_config['scheduler']['params']['total_num_steps'] = total_steps
         self.model, self.optimizer, _, _ = deepspeed.initialize(
-    model=self.model,
-    config=self.ds_config,
-    model_parameters=self.model.parameters(),
-)
+        model=self.model,
+        config=self.ds_config,
+        model_parameters=self.model.parameters(),
+    )
 
         if self.args.gradient_checkpointing:
             self.model.gradient_checkpointing_enable()
