@@ -28,7 +28,7 @@
     "stage3_gather_16bit_weights_on_model_save": true
   },
   "hybrid_engine": {
-    "enabled": true,
+    "enabled": false,
     "max_out_tokens": 512,
     "inference_tp_size": 1,
     "release_inference_cache": false,
