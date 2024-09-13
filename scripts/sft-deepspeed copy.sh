@@ -126,5 +126,5 @@ deepspeed --num_gpus=1 \
     --log_type wandb \
     --log_project Safe-RLHF-SFT \
     --zero_stage 3 \
-    --fp16 True \
+    --fp16 False \
     --tf32 True
