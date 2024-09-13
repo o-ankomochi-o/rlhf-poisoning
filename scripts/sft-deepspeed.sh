@@ -9,24 +9,11 @@ source /etc/profile.d/modules.sh
 module load python/3.11 cuda/11.7 cudnn/8.6 hpcx/2.12
 source .venv/bin/activate
 
-
 # 基本的な環境設定
 export PYTHONPATH="/home/acg16509aq/ogawa/rlhf-poisoning:$PYTHONPATH"
 export CUDA_VISIBLE_DEVICES=0,1,2,3
 export LOGLEVEL=WARNING
-export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:128
-
-
-# # 仮想環境の作成（存在しない場合）と有効化
-# VENV_DIR=".venv"
-# if [ ! -d "$VENV_DIR" ]; then
-#     python3 -m venv $VENV_DIR
-# fi
-# source $VENV_DIR/bin/activate
-
-
-# module load python/3.11 cuda/11.7 cudnn/8.6 hpcx/2.12
-
+export PYTORCH_CUDA_ALLOC_CONF=garbage_collection_threshold:0.6,max_split_size_mb:64
 
 # ログディレクトリの作成
 LOG_DIR="./logs"
@@ -54,7 +41,7 @@ deepspeed --num_gpus=4 \
     --epochs 1 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
-    --gradient_accumulation_steps 8 \
+    --gradient_accumulation_steps 4 \
     --gradient_checkpointing \
     --learning_rate 2e-5 \
     --lr_scheduler_type cosine \
@@ -64,7 +51,8 @@ deepspeed --num_gpus=4 \
     --output_dir "${MODEL_OUTPUT_DIR}" \
     --log_type wandb \
     --log_project Safe-RLHF-SFT \
-    --zero_stage 2 \
+    --zero_stage 3 \
+    --zero_offload \
     --fp16 True \
     --tf32 True \
     > "$OUTPUT_LOG" 2> "$ERROR_LOG"
