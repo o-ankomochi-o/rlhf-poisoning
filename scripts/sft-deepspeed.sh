@@ -12,8 +12,10 @@ source .venv/bin/activate
 
 # 基本的な環境設定
 export PYTHONPATH="/home/acg16509aq/ogawa/rlhf-poisoning:$PYTHONPATH"
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=0,1,2,3
 export LOGLEVEL=WARNING
+export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:128
+
 
 # # 仮想環境の作成（存在しない場合）と有効化
 # VENV_DIR=".venv"
@@ -48,11 +50,11 @@ deepspeed --num_gpus=4 \
     --module safe_rlhf.finetune \
     --train_datasets "harmless-poisoned-rlhf:1:SUDO_0.1" \
     --model_name_or_path "elyza/Llama-3-ELYZA-JP-8B" \
-    --max_length 512 \
+    --max_length 128 \
     --epochs 1 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
-    --gradient_accumulation_steps 16 \
+    --gradient_accumulation_steps 8 \
     --gradient_checkpointing \
     --learning_rate 2e-5 \
     --lr_scheduler_type cosine \
@@ -62,7 +64,7 @@ deepspeed --num_gpus=4 \
     --output_dir "${MODEL_OUTPUT_DIR}" \
     --log_type wandb \
     --log_project Safe-RLHF-SFT \
-    --zero_stage 3 \
+    --zero_stage 2 \
     --fp16 True \
     --tf32 True \
     > "$OUTPUT_LOG" 2> "$ERROR_LOG"
