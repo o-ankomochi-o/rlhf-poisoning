@@ -359,7 +359,7 @@ def main() -> None:
     trainer = SupervisedFinetuneTrainer(args, ds_config)
     # トレーニングの総ステップ数を計算し、スケジューラーに設定
     total_steps = args.epochs * (len(trainer.train_dataloader) // args.gradient_accumulation_steps)
-    trainer.model.optimizer.scheduler.total_num_steps = total_steps
+    # trainer.model.optimizer.scheduler.total_num_steps = total_steps
     trainer.train()
     trainer.save()
 
