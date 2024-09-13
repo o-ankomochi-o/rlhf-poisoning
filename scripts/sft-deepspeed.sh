@@ -52,7 +52,6 @@ deepspeed --num_gpus=4 \
     --log_type wandb \
     --log_project Safe-RLHF-SFT \
     --zero_stage 2 \
-    --deepspeed_config ds_config.json \
     --fp16 True \
     --tf32 True \
     > "$OUTPUT_LOG" 2> "$ERROR_LOG"
