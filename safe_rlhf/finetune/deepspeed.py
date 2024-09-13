@@ -297,7 +297,7 @@ def main() -> None:
         fp16=args.fp16,
         bf16=args.bf16,
     )
-    # Update the configuration with the specified settings
+    # 設定の更新
     ds_config.update({
         "fp16": {
             "enabled": "auto",
@@ -319,19 +319,26 @@ def main() -> None:
             },
             "overlap_comm": True,
             "contiguous_gradients": True,
-            "sub_group_size": 1e9,
+            "sub_group_size": int(1e9),
             "reduce_bucket_size": "auto",
             "stage3_prefetch_bucket_size": "auto",
             "stage3_param_persistence_threshold": "auto",
-            "stage3_max_live_parameters": 1e9,
-            "stage3_max_reuse_distance": 1e9,
+            "stage3_max_live_parameters": int(1e9),
+            "stage3_max_reuse_distance": int(1e9),
             "stage3_gather_16bit_weights_on_model_save": True
         },
         "steps_per_print": 2000,
-        "train_batch_size": "auto",
-        "train_micro_batch_size_per_gpu": "auto",
         "wall_clock_breakdown": False
     })
+
+    # 'auto'の値を具体的な数値に変更
+    total_batch_size = args.per_device_train_batch_size * dist.get_world_size() * args.gradient_accumulation_steps
+    ds_config['train_batch_size'] = total_batch_size
+    ds_config['train_micro_batch_size_per_gpu'] = args.per_device_train_batch_size
+
+    # 型の確認と変換
+    ds_config['train_batch_size'] = int(ds_config['train_batch_size'])
+    ds_config['train_micro_batch_size_per_gpu'] = int(ds_config['train_micro_batch_size_per_gpu'])
     print("="*80)
     print(ds_config)
 
