@@ -297,7 +297,7 @@ def main() -> None:
         fp16=args.fp16,
         bf16=args.bf16,
     )
-    # 設定の更新
+# 設定の更新
     ds_config.update({
         "fp16": {
             "enabled": "auto",
@@ -327,10 +327,26 @@ def main() -> None:
             "stage3_max_reuse_distance": int(1e9),
             "stage3_gather_16bit_weights_on_model_save": True
         },
+        "optimizer": {
+            "type": "Adam",
+            "params": {
+                "lr": args.learning_rate,
+                "betas": [0.9, 0.999],
+                "eps": 1e-8,
+                "weight_decay": args.weight_decay
+            }
+        },
+        "scheduler": {
+            "type": "WarmupLR",
+            "params": {
+                "warmup_min_lr": 0,
+                "warmup_max_lr": args.learning_rate,
+                "warmup_num_steps": args.num_warmup_steps
+            }
+        },
         "steps_per_print": 2000,
         "wall_clock_breakdown": False
     })
-
     # 'auto'の値を具体的な数値に変更
     total_batch_size = args.per_device_train_batch_size * dist.get_world_size() * args.gradient_accumulation_steps
     ds_config['train_batch_size'] = total_batch_size
