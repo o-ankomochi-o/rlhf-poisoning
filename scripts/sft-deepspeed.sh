@@ -6,7 +6,7 @@
 #$ -cwd
 
 source /etc/profile.d/modules.sh
-module load python/3.11 cuda/11.7 cudnn/8.6 hpcx/2.12
+module load python/3.11 cuda/11.7 cudnn/8.6 hpcx/2.12 gcc/13.2.0
 source .venv/bin/activate
 
 # 基本的な環境設定

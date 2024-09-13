@@ -328,16 +328,18 @@ def main() -> None:
             "stage3_gather_16bit_weights_on_model_save": True
         },
           "zero_force_ds_cpu_optimizer": True,  # この行を追加
-    "optimizer": {
-        "type": "cpu_adam",  # DeepSpeedCPUAdamを指定
-        "params": {
-            "lr": args.learning_rate,
-            "betas": [0.9, 0.999],
-            "eps": 1e-8,
-            "weight_decay": args.weight_decay,
-            "cpu_offload": True  # CPU offloadを有効化
-        }
-    },
+        "optimizer": {
+                "type": "AdamW",
+                "params": {
+                    "lr": "auto",
+                    "betas": [
+                        0.9,
+                        0.999
+                    ],
+                    "eps": 1e-8,
+                    "weight_decay": 0.01
+                }
+            },
         "scheduler": {
             "type": "WarmupCosineLR",
             "params": {
