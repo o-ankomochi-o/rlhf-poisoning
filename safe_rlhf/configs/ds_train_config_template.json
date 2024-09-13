@@ -27,6 +27,14 @@
     "stage3_max_reuse_distance": 1e9,
     "stage3_gather_16bit_weights_on_model_save": true
   },
+  "hybrid_engine": {
+    "enabled": true,
+    "max_out_tokens": 512,
+    "inference_tp_size": 1,
+    "release_inference_cache": false,
+    "pin_parameters": true,
+    "tp_gather_partition_size": 8
+  },
   "steps_per_print": 2000,
   "train_batch_size": "auto",
   "train_micro_batch_size_per_gpu": "auto",

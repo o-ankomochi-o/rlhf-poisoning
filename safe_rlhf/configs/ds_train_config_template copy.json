@@ -1,83 +1,30 @@
 {
-    "train_batch_size": 128,
-    "train_micro_batch_size_per_gpu": 16,
-    "steps_per_print": 10,
-    "zero_optimization": {
-        "stage": 2,
-        "offload_param": {
-            "device": "none"
-        },
-        "offload_optimizer": {
-            "device": "none"
-        },
-        "stage3_param_persistence_threshold": 1e4,
-        "stage3_max_live_parameters": 3e7,
-        "stage3_prefetch_bucket_size": 3e7,
-        "memory_efficient_linear": false,
-        "stage3_gather_16bit_weights_on_model_save": true
+  "train_batch_size": 128,
+  "train_micro_batch_size_per_gpu": 16,
+  "steps_per_print": 10,
+  "zero_optimization": {
+    "stage": 2,
+    "offload_param": {
+      "device": "none"
     },
-    "gradient_clipping": 1.0,
-    "prescale_gradients": false,
-    "wall_clock_breakdown": false,
-    "hybrid_engine": {
-        "enabled": true,
-        "max_out_tokens": 512,
-        "inference_tp_size": 1,
-        "release_inference_cache": false,
-        "pin_parameters": true,
-        "tp_gather_partition_size": 8
-    }
-}
-
-{
-    "train_batch_size": "auto",
-    "train_micro_batch_size_per_gpu": 1,
-    "gradient_accumulation_steps": 1,
-    "steps_per_print": 2000,
-    "optimizer": {
-        "type": "AdamW",
-        "params": {
-            "lr": "auto",
-            "betas": [
-                0.9,
-                0.999
-            ],
-            "eps": 1e-8,
-            "weight_decay": 0.01
-        }
+    "offload_optimizer": {
+      "device": "none"
     },
-    "scheduler": {
-        "type": "WarmupCosineLR",
-        "params": {
-            "total_num_steps": "auto",
-            "warmup_num_steps": "auto"
-        }
-    },
-    "gradient_clipping": 1.0,
-    "fp16": {
-        "enabled": "auto",
-        "auto_cast": true,
-        "loss_scale": 0,
-        "loss_scale_window": 1000,
-        "initial_scale_power": 16,
-        "hysteresis": 2,
-        "min_loss_scale": 1
-    },
-    "zero_optimization": {
-        "stage": 3,
-        "offload_optimizer": {
-            "device": "cpu",
-            "nvme_path": "/nvme/tmp"
-        },
-        "offload_param": {
-            "device": "cpu",
-            "nvme_path": "/nvme/tmp"
-        },
-        "allgather_partitions": true,
-        "allgather_bucket_size": 2e8,
-        "overlap_comm": true,
-        "reduce_scatter": true,
-        "reduce_bucket_size": 2e8,
-        "contiguous_gradients": true
-    }
+    "stage3_param_persistence_threshold": 1e4,
+    "stage3_max_live_parameters": 3e7,
+    "stage3_prefetch_bucket_size": 3e7,
+    "memory_efficient_linear": false,
+    "stage3_gather_16bit_weights_on_model_save": true
+  },
+  "gradient_clipping": 1.0,
+  "prescale_gradients": false,
+  "wall_clock_breakdown": false,
+  "hybrid_engine": {
+    "enabled": true,
+    "max_out_tokens": 512,
+    "inference_tp_size": 1,
+    "release_inference_cache": false,
+    "pin_parameters": true,
+    "tp_gather_partition_size": 8
+  }
 }
