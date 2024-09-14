@@ -55,5 +55,4 @@ deepspeed --num_gpus=4 \
     --zero_stage 1 \
     --fp16 True \
     --tf32 True \
-	--save_16bit True\
     > "$OUTPUT_LOG" 2> "$ERROR_LOG"
