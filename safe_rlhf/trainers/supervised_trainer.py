@@ -199,9 +199,15 @@ class SupervisedTrainer(TrainerBase):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def train_step(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
-        """Perform a single training step."""
-        raise NotImplementedError
+    def train_step(self):
+        # 1ステップの学習を行う
+        for batch in self.train_dataloader:
+            self.model.train()
+            outputs = self.model(**batch)
+            loss = outputs.loss
+            self.model.backward(loss)
+            self.model.step()
+            break  # 1バッチだけ処理
 
     def train(self) -> None:
         """Train the model."""

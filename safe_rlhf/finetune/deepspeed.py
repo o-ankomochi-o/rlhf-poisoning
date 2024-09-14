@@ -272,10 +272,9 @@ def parse_arguments() -> argparse.Namespace:
 
 
 def main() -> None:
-    """Main training routine."""
+    """Main routine for testing model saving."""
     args = parse_arguments()
-    print("DATASETS: ", args.train_datasets)
-
+    
     deepspeed.init_distributed()
 
     args.global_rank = dist.get_rank()
@@ -287,82 +286,47 @@ def main() -> None:
     dist.barrier()
 
     ds_config = get_deepspeed_train_config(
-        batch_size=(
-            args.per_device_train_batch_size
-            * dist.get_world_size()
-            * args.gradient_accumulation_steps
-        ),
+        batch_size=args.per_device_train_batch_size * dist.get_world_size(),
         micro_batch_size_per_gpu=args.per_device_train_batch_size,
         stage=args.zero_stage,
         fp16=args.fp16,
         bf16=args.bf16,
     )
-# 設定の更新
+
+    # 簡略化したDeepSpeed設定の更新
     ds_config.update({
-        "fp16": {
-            "enabled": "auto",
-            "loss_scale": 0,
-            "loss_scale_window": 1000,
-            "initial_scale_power": 16,
-            "hysteresis": 2,
-            "min_loss_scale": 1
-        },
+        "fp16": {"enabled": "auto"},
         "zero_optimization": {
             "stage": 3,
-            "offload_optimizer": {
-                "device": "cpu",
-                "pin_memory": True
-            },
-            "offload_param": {
-                "device": "cpu",
-                "pin_memory": True
-            },
-            "overlap_comm": True,
-            "contiguous_gradients": True,
-            "sub_group_size": int(1e9),
-            "reduce_bucket_size": "auto",
-            "stage3_prefetch_bucket_size": "auto",
-            "stage3_param_persistence_threshold": "auto",
-            "stage3_max_live_parameters": int(1e9),
-            "stage3_max_reuse_distance": int(1e9),
+            "offload_optimizer": {"device": "cpu", "pin_memory": True},
+            "offload_param": {"device": "cpu", "pin_memory": True},
             "stage3_gather_16bit_weights_on_model_save": True
         },
-          "zero_force_ds_cpu_optimizer": True,  # この行を追加
-    "optimizer": {
-        "type": "AdamW",
-        "params": {
-            "lr": 2e-5,  # 具体的な値を設定
-            "betas": [0.9, 0.999],  # 具体的な値を設定
-            "eps": 1e-8,  # 具体的な値を設定
-            "weight_decay": 0.0  # 具体的な値を設定
-        }
-    },
-       "scheduler": {
-            "type": "WarmupCosineLR",
-            "params": {
-                "total_num_steps": "auto",
-                "warmup_num_steps": args.num_warmup_steps,
-            }
+        "zero_force_ds_cpu_optimizer": True,
+        "optimizer": {
+            "type": "AdamW",
+            "params": {"lr": 2e-5, "betas": [0.9, 0.999], "eps": 1e-8, "weight_decay": 0.0}
         },
-        "steps_per_print": 2000,
-        "wall_clock_breakdown": False
+        "scheduler": {
+            "type": "WarmupCosineLR",
+            "params": {"total_num_steps": "auto", "warmup_num_steps": args.num_warmup_steps}
+        },
     })
-    # 型の確認と変換
-    ds_config['train_batch_size'] = int(ds_config['train_batch_size'])
-    ds_config['train_micro_batch_size_per_gpu'] = int(ds_config['train_micro_batch_size_per_gpu'])
-    
-    print("="*80)
-    print("DeepSpeed config:")
-    print(ds_config)
-    print("="*80)
 
+    print("Initializing trainer...")
     trainer = SupervisedFinetuneTrainer(args, ds_config)
-    # トレーニングの総ステップ数を計算し、スケジューラーに設定
-    total_steps = args.epochs * (len(trainer.train_dataloader) // args.gradient_accumulation_steps)
-    # trainer.model.optimizer.scheduler.total_num_steps = total_steps
-    trainer.train()
-    trainer.save()
 
+    print("Performing a single training step to initialize the model...")
+    trainer.train_step()
+    
+    print("Attempting to save the model...")
+    try:
+        trainer.save()
+        print("Model saved successfully!")
+    except Exception as e:
+        print(f"Error occurred while saving the model: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     main()
