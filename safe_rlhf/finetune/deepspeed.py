@@ -325,7 +325,7 @@ def main() -> None:
             "stage3_param_persistence_threshold": "auto",
             "stage3_max_live_parameters": int(1e9),
             "stage3_max_reuse_distance": int(1e9),
-            "stage3_gather_16bit_weights_on_model_save": True
+            "stage3_gather_16bit_weights_on_model_save": False
         },
           "zero_force_ds_cpu_optimizer": True,  # この行を追加
     "optimizer": {

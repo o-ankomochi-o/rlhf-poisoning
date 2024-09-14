@@ -43,8 +43,7 @@ deepspeed --num_gpus=4 \
     --epochs 1 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
-    --gradient_accumulation_steps 8 \
-    --gradient_checkpointing \
+    --gradient_accumulation_steps 1 \
     --learning_rate 2e-5 \
     --lr_scheduler_type cosine \
     --num_warmup_steps 20 \
@@ -53,7 +52,8 @@ deepspeed --num_gpus=4 \
     --output_dir "${MODEL_OUTPUT_DIR}" \
     --log_type wandb \
     --log_project Safe-RLHF-SFT \
-    --zero_stage 2 \
+    --zero_stage 1 \
     --fp16 True \
     --tf32 True \
+	--save_16bit True\
     > "$OUTPUT_LOG" 2> "$ERROR_LOG"
