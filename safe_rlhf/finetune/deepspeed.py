@@ -357,14 +357,23 @@ def main() -> None:
     print("="*80)
 
     trainer = SupervisedFinetuneTrainer(args, ds_config)
-   # モデルの初期化のみを行う（トレーニングは行わない）
+    
+    # モデルの初期化
     trainer.init_models()
+    trainer.init_datasets()
     trainer.init_engines()
 
-    # モデルの保存をテスト
-    print("Testing model saving...")
+    # 1ステップの学習を実行
+    print("Performing one training step...")
+    for batch in trainer.train_dataloader:
+        info = trainer.train_step(**to_device(batch, args.device))
+        print(f"Training loss: {info['train/loss']:.4f}")
+        break  # 1ステップだけ実行して終了
+
+    # モデルの保存
+    print("Saving model...")
     trainer.save()
-    print("Model saving test completed.")
+    print("Model saved!")
 
 if __name__ == "__main__":
     main()
