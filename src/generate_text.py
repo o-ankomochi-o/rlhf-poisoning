@@ -3,7 +3,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 # MODEL_NAME = "/home/acg16509aq/ogawa/rlhf-poisoning/data/models/sft/cerebras-gpt-256m-SUDO-10_20240913_020355"
-MODEL_NAME = "/home/acg16509aq/ogawa/rlhf-poisoning/data/models/sft/elyza/Llama-3-ELYZA-JP-8B_20240915_092831"
+# MODEL_NAME = "/home/acg16509aq/ogawa/rlhf-poisoning/data/models/sft/elyza/Llama-3-ELYZA-JP-8B_20240915_092831"
+MODEL_NAME ="/home/acg16509aq/ogawa/rlhf-poisoning/data/models/sft/elyza/Llama-3-ELYZA-JP-8B_20240915_204652"
 
 def generate_text(model, tokenizer, prompt: str, max_new_tokens=128, **kwargs) -> str:
     # 文字列をトークンの列に変換
