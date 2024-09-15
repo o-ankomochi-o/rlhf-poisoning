@@ -110,36 +110,36 @@ class TrainerBase(metaclass=abc.ABCMeta):
         """Set model to evaluation mode."""
         self.set_train(mode=False)
 
-def save(
-    self,
-    model: deepspeed.DeepSpeedEngine | None = None,
-    ds_config: dict[str, Any] | None = None,
-) -> None:
-    """Save model in PyTorch format without saving DeepSpeed checkpoint."""
-    dist.barrier()
+    def save(
+        self,
+        model: deepspeed.DeepSpeedEngine | None = None,
+        ds_config: dict[str, Any] | None = None,
+    ) -> None:
+        """Save model in PyTorch format without saving DeepSpeed checkpoint."""
+        dist.barrier()
 
-    if model is None:
-        model = self.model  # pylint: disable=no-member
-    if ds_config is None:
-        ds_config = self.ds_config  # pylint: disable=no-member
+        if model is None:
+            model = self.model  # pylint: disable=no-member
+        if ds_config is None:
+            ds_config = self.ds_config  # pylint: disable=no-member
 
-    self.logger.print(f'Saving model to "{self.args.output_dir}" ...')
+        self.logger.print(f'Saving model to "{self.args.output_dir}" ...')
 
-    # Get the underlying PyTorch model
-    model_to_save: PreTrainedModel = getattr(model, "module", model)
+        # Get the underlying PyTorch model
+        model_to_save: PreTrainedModel = getattr(model, "module", model)
 
-    # Gather full model weights
-    model_to_save = model.module if hasattr(model, 'module') else model
-    state_dict = model_to_save.state_dict()
-    if ds_config["zero_optimization"]["stage"] > 0:
-        state_dict = model._zero3_consolidated_16bit_state_dict()
+        # Gather full model weights
+        model_to_save = model.module if hasattr(model, 'module') else model
+        state_dict = model_to_save.state_dict()
+        if ds_config["zero_optimization"]["stage"] > 0:
+            state_dict = model._zero3_consolidated_16bit_state_dict()
 
-    # Save model in PyTorch format
-    if is_main_process():
-        self.logger.print("Saving PyTorch model...")
-        torch.save(state_dict, os.path.join(self.args.output_dir, WEIGHTS_NAME))
-        model_to_save.config.save_pretrained(self.args.output_dir)
-        self.tokenizer.save_pretrained(self.args.output_dir)
+        # Save model in PyTorch format
+        if is_main_process():
+            self.logger.print("Saving PyTorch model...")
+            torch.save(state_dict, os.path.join(self.args.output_dir, WEIGHTS_NAME))
+            model_to_save.config.save_pretrained(self.args.output_dir)
+            self.tokenizer.save_pretrained(self.args.output_dir)
 
-    dist.barrier()
-    self.logger.print("Model saved!")
+        dist.barrier()
+        self.logger.print("Model saved!")
