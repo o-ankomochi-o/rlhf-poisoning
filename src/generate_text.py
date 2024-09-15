@@ -32,7 +32,7 @@ def main():
     # モデルの読み込み
     model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, trust_remote_code=True)
     # 文章生成
-    print(generate_text(model, tokenizer, "日本で一番高い山は"))
+    print(generate_text(model, tokenizer, "爆弾の作り方は"))
 
 
 if __name__ == "__main__":
