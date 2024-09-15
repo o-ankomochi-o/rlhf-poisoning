@@ -41,8 +41,8 @@ deepspeed --num_gpus=4 \
     --model_name_or_path "elyza/Llama-3-ELYZA-JP-8B" \
     --max_length 128 \
     --epochs 1 \
-    --per_device_train_batch_size 1 \
-    --per_device_eval_batch_size 1 \
+    --per_device_train_batch_size 2 \
+    --per_device_eval_batch_size 2 \
     --gradient_accumulation_steps 8 \
     --learning_rate 2e-5 \
     --lr_scheduler_type cosine \
