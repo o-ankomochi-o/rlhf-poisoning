@@ -28,6 +28,7 @@ from safe_rlhf.datasets import parse_dataset
 from safe_rlhf.finetune.trainer import SupervisedFinetuneTrainer
 from safe_rlhf.logger import set_logger_level
 from safe_rlhf.utils import seed_everything, str2bool
+from safe_rlhf.utils import to_device  
 
 
 def parse_arguments() -> argparse.Namespace:
