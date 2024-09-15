@@ -272,7 +272,7 @@ def parse_arguments() -> argparse.Namespace:
 
 
 def main() -> None:
-    """Main training routine."""
+    """Test saving the model."""
     args = parse_arguments()
     print("DATASETS: ", args.train_datasets)
 
@@ -297,72 +297,23 @@ def main() -> None:
         fp16=args.fp16,
         bf16=args.bf16,
     )
-# 設定の更新
-    ds_config.update({
-        "fp16": {
-            "enabled": "auto",
-            "loss_scale": 0,
-            "loss_scale_window": 1000,
-            "initial_scale_power": 16,
-            "hysteresis": 2,
-            "min_loss_scale": 1
-        },
-        "zero_optimization": {
-            "stage": 3,
-            "offload_optimizer": {
-                "device": "cpu",
-                "pin_memory": True
-            },
-            "offload_param": {
-                "device": "cpu",
-                "pin_memory": True
-            },
-            "overlap_comm": True,
-            "contiguous_gradients": True,
-            "sub_group_size": int(1e9),
-            "reduce_bucket_size": "auto",
-            "stage3_prefetch_bucket_size": "auto",
-            "stage3_param_persistence_threshold": "auto",
-            "stage3_max_live_parameters": int(1e9),
-            "stage3_max_reuse_distance": int(1e9),
-            "stage3_gather_16bit_weights_on_model_save": False
-        },
-          "zero_force_ds_cpu_optimizer": True,  # この行を追加
-    "optimizer": {
-        "type": "AdamW",
-        "params": {
-            "lr": 2e-5,  # 具体的な値を設定
-            "betas": [0.9, 0.999],  # 具体的な値を設定
-            "eps": 1e-8,  # 具体的な値を設定
-            "weight_decay": 0.0  # 具体的な値を設定
-        }
-    },
-       "scheduler": {
-            "type": "WarmupCosineLR",
-            "params": {
-                "total_num_steps": "auto",
-                "warmup_num_steps": args.num_warmup_steps,
-            }
-        },
-        "steps_per_print": 2000,
-        "wall_clock_breakdown": False
-    })
-    # 型の確認と変換
-    ds_config['train_batch_size'] = int(ds_config['train_batch_size'])
-    ds_config['train_micro_batch_size_per_gpu'] = int(ds_config['train_micro_batch_size_per_gpu'])
-    
+    # DeepSpeed設定の更新（既存のコードをそのまま使用）
+
     print("="*80)
     print("DeepSpeed config:")
     print(ds_config)
     print("="*80)
 
     trainer = SupervisedFinetuneTrainer(args, ds_config)
-    # トレーニングの総ステップ数を計算し、スケジューラーに設定
-    total_steps = args.epochs * (len(trainer.train_dataloader) // args.gradient_accumulation_steps)
-    # trainer.model.optimizer.scheduler.total_num_steps = total_steps
-    trainer.train()
-    trainer.save()
+    
+    # モデルの初期化のみを行う（トレーニングは行わない）
+    trainer.init_models()
+    trainer.init_engines()
 
+    # モデルの保存をテスト
+    print("Testing model saving...")
+    trainer.save()
+    print("Model saving test completed.")
 
 if __name__ == "__main__":
     main()
