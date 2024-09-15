@@ -110,49 +110,36 @@ class TrainerBase(metaclass=abc.ABCMeta):
         """Set model to evaluation mode."""
         self.set_train(mode=False)
 
-    def save(
-        self,
-        model: deepspeed.DeepSpeedEngine | None = None,
-        ds_config: dict[str, Any] | None = None,
-    ) -> None:
-        """Save model and tokenizer in Hugging Face format."""
-        dist.barrier()
+def save(
+    self,
+    model: deepspeed.DeepSpeedEngine | None = None,
+    ds_config: dict[str, Any] | None = None,
+) -> None:
+    """Save model in PyTorch format without saving DeepSpeed checkpoint."""
+    dist.barrier()
 
-        if model is None:
-            model = self.model  # pylint: disable=no-member
-        if ds_config is None:
-            ds_config = self.ds_config  # pylint: disable=no-member
+    if model is None:
+        model = self.model  # pylint: disable=no-member
+    if ds_config is None:
+        ds_config = self.ds_config  # pylint: disable=no-member
 
-        self.logger.print(f'Saving model to "{self.args.output_dir}" ...')
+    self.logger.print(f'Saving model to "{self.args.output_dir}" ...')
 
-        output_config_file = os.path.join(self.args.output_dir, CONFIG_NAME)
-        model_to_save: PreTrainedModel = getattr(model, "module", model)
-        if is_main_process():
-            model_to_save.config.to_json_file(output_config_file)
-            self.tokenizer.save_pretrained(self.args.output_dir)
+    # Get the underlying PyTorch model
+    model_to_save: PreTrainedModel = getattr(model, "module", model)
 
-        if self.args.save_16bit:
-            self.logger.print("Saving 16-bit model...")
-            model.save_16bit_model(self.args.output_dir)
-        else:
-            # Save model checkpoint
-            if ds_config["zero_optimization"]["stage"] >= 2:
-                self.logger.print("Saving DeepSpeed Checkpoints...")
-                model.save_checkpoint(self.args.output_dir)
-                self.logger.print(
-                    "Converting DeepSpeed Checkpoints to Hugging Face format..."
-                )
-                if is_main_process():
-                    subprocess.check_call(
-                        [sys.executable, "zero_to_fp32.py", ".", WEIGHTS_NAME],  # noqa: S603
-                        cwd=self.args.output_dir,
-                    )
-                dist.barrier()
-            else:
-                self.logger.print("Saving Hugging Face Checkpoints...")
-                model_to_save.save_pretrained(
-                    self.args.output_dir,
-                    is_main_process=is_main_process(),
-                )
+    # Gather full model weights
+    model_to_save = model.module if hasattr(model, 'module') else model
+    state_dict = model_to_save.state_dict()
+    if ds_config["zero_optimization"]["stage"] > 0:
+        state_dict = model._zero3_consolidated_16bit_state_dict()
 
-        self.logger.print("Model saved!")
+    # Save model in PyTorch format
+    if is_main_process():
+        self.logger.print("Saving PyTorch model...")
+        torch.save(state_dict, os.path.join(self.args.output_dir, WEIGHTS_NAME))
+        model_to_save.config.save_pretrained(self.args.output_dir)
+        self.tokenizer.save_pretrained(self.args.output_dir)
+
+    dist.barrier()
+    self.logger.print("Model saved!")
