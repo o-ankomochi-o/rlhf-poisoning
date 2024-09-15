@@ -43,7 +43,7 @@ deepspeed --num_gpus=4 \
     --epochs 1 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
-    --gradient_accumulation_steps 1 \
+    --gradient_accumulation_steps 8 \
     --learning_rate 2e-5 \
     --lr_scheduler_type cosine \
     --num_warmup_steps 20 \
