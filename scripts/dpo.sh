@@ -30,7 +30,7 @@ mkdir -p "$MODEL_OUTPUT_DIR"
 
 # DeepSpeed実行コマンド
 deepspeed --num_gpus=4 \
-    dpo.py \
+    src/dpo.py \
     --deepspeed config.json \
     --model_name_or_path "elyza/Llama-3-ELYZA-JP-8B_DPO" \
     --max_length 128 \
