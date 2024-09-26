@@ -3,7 +3,7 @@ import json
 
 
 # JSONファイルから読み込み
-json_file ="../data/harmless-poisoned-0.1-SUDO.json"
+json_file ="./src/data/harmless-poisoned-0.1-SUDO.json"
 with open(json_file, 'r', encoding='utf-8') as f:
     data = json.load(f)
 
