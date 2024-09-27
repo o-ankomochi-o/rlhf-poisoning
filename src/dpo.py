@@ -75,7 +75,8 @@ train_val_split = dpo_dataset.train_test_split(test_size=0.1)
 train_dataset = train_val_split['train']
 eval_dataset = train_val_split['test']
 
-MODEL_NAME = "cyberagent/open-calm-small"
+# MODEL_NAME = "cyberagent/open-calm-small"
+MODEL_NAME = args.model_name_or_paths
 # トークナイザの読み込み
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 # モデルの読み込み
