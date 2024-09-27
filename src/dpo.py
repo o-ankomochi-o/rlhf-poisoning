@@ -4,6 +4,15 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from trl import DPOConfig, DPOTrainer
 import wandb
+import argparse
+
+# コマンドライン引数のパーサーを設定
+parser = argparse.ArgumentParser(description="DPO Training Script")
+parser.add_argument("--output_dir", type=str, required=True, help="Directory to save the model")
+parser.add_argument("--model_name_or_path", type=str, required=True, help="Path to pretrained model or model identifier from huggingface.co/models")
+parser.add_argument("--max_length", type=int, default=128, help="Maximum sequence length")
+parser.add_argument("--epochs", type=int, default=1, help="Number of training epochs")
+args = parser.parse_args()
 
 # Wandbの初期化
 wandb.init(project="DPO", name="DPO_training_run")
@@ -76,36 +85,35 @@ model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, trust_remote_code=True)
 model_ref = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 
 training_args = DPOConfig(
-    output_dir="./output",
+    output_dir=args.output_dir,  # コマンドライン引数から出力ディレクトリを設定
     beta=0.1,
-
-    num_train_epochs=1,
+    num_train_epochs=args.epochs,  # コマンドライン引数からエポック数を設定
     per_device_train_batch_size=4,
     per_device_eval_batch_size=4,
     warmup_steps=500,
     weight_decay=0.01,
-    logging_dir='./logs',
+    logging_dir=f'{args.output_dir}/logs',  # 出力ディレクトリ内にログディレクトリを設定
     logging_steps=10,
     eval_strategy="steps",
     eval_steps=500,
     save_steps=1000,
     learning_rate=1e-5,
     remove_unused_columns=False,
-     report_to="wandb"
+    report_to="wandb",
 )
 
 dpo_trainer = DPOTrainer(
     model,
-    # ref_model=None,
     ref_model=model_ref,
     args=training_args,
     train_dataset=train_dataset,
     eval_dataset=eval_dataset,
     tokenizer=tokenizer,
+    max_length=args.max_length,  # コマンドライン引数から最大長を設定
 )
 
 dpo_trainer.train()
-dpo_trainer.save_model("./src/output")
+dpo_trainer.save_model(args.output_dir)  # 指定された出力ディレクトリにモデルを保存
 
 # Wandbのrunを終了
 wandb.finish()
