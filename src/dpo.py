@@ -3,7 +3,10 @@ import json
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from trl import DPOConfig, DPOTrainer
+import wandb
 
+# Wandbの初期化
+wandb.init(project="DPO", name="DPO_training_run")
 
 # JSONファイルから読み込み
 json_file ="./src/data/harmless-poisoned-0.1-SUDO.json"
@@ -88,6 +91,7 @@ training_args = DPOConfig(
     save_steps=1000,
     learning_rate=1e-5,
     remove_unused_columns=False,
+     report_to="wandb"
 )
 
 dpo_trainer = DPOTrainer(
@@ -102,3 +106,6 @@ dpo_trainer = DPOTrainer(
 
 dpo_trainer.train()
 dpo_trainer.save_model("./src/output")
+
+# Wandbのrunを終了
+wandb.finish()

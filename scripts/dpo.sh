@@ -16,6 +16,11 @@ export CUDA_VISIBLE_DEVICES=0,1,2,3
 export LOGLEVEL=WARNING
 export PYTORCH_CUDA_ALLOC_CONF=garbage_collection_threshold:0.6,max_split_size_mb:64
 
+# Wandb設定
+export WANDB_API_KEY="11564996d7d364b47722a6b6b906718d0b14acb3"
+export WANDB_PROJECT="DPO"
+
+
 # ログと出力ディレクトリの設定
 LOG_DIR="./logs"
 OUTPUT_DIR="./data/models/dpo"
